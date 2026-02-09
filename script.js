@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (distanceToNo < escapeRadius) {
             // First time it runs away, lock it to fixed position and calculate bounds
             if (!isAbsolute) {
-                noBtn.style.position = 'fixed';
+                noBtn.style.position = 'absolute'; // Use absolute to stay in layout flow
                 noBtn.style.left = `${noRect.left}px`;
                 noBtn.style.top = `${noRect.top}px`;
                 noBtn.style.transform = 'none';
