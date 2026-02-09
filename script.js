@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScale = 1;
     const MAX_SCALE = 5;
 
-    // State to track if we've switched to absolute positioning
-    let isAbsolute = false;
+    // State to track if we've switched to fixed positioning
+    let isFixed = false;
 
     // Target position for smooth trailing
     let targetX = 0;
@@ -51,13 +51,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const escapeRadius = 150;
 
         if (distanceToNo < escapeRadius) {
-            // First time it runs away, lock it to fixed position and calculate bounds
-            if (!isAbsolute) {
-                noBtn.style.position = 'absolute'; // Use absolute to stay in layout flow
+            // First time it runs away, create ghost and move to body
+            if (!isFixed) {
+                // Create invisible ghost to hold the space
+                const ghost = noBtn.cloneNode(true);
+                ghost.id = 'noBtn-ghost';
+                ghost.style.opacity = '0';
+                ghost.style.pointerEvents = 'none';
+                noBtn.parentNode.insertBefore(ghost, noBtn);
+
+                // Move No button to body for unrestricted movement
+                document.body.appendChild(noBtn);
+
+                noBtn.style.position = 'fixed';
                 noBtn.style.left = `${noRect.left}px`;
                 noBtn.style.top = `${noRect.top}px`;
+                noBtn.style.margin = '0';
                 noBtn.style.transform = 'none';
-                isAbsolute = true;
+                isFixed = true;
 
                 // Set initial current position
                 currentX = noRect.left;
@@ -93,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Smooth trailing animation
     function updateButtonPosition() {
-        if (isAbsolute) {
+        if (isFixed) {
             // Smooth interpolation (lerp) for trailing effect
             const lerpFactor = 0.15; // Lower = smoother/slower trailing
             currentX += (targetX - currentX) * lerpFactor;
